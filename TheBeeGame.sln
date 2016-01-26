@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBeeGame", "TheBeeGame\TheBeeGame.csproj", "{2B8E6EF9-0C64-4E46-AE30-9AA9B1ED1B5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBeeGame.Tests", "TheBeeGame.Tests\TheBeeGame.Tests.csproj", "{DD958467-B93E-456C-8D0F-2ECFF12FFB80}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheBeeGameTests", "TheBeeGameTests\TheBeeGameTests.csproj", "{8FF43695-6B7D-4BCA-A523-C56C883D4C45}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{2B8E6EF9-0C64-4E46-AE30-9AA9B1ED1B5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B8E6EF9-0C64-4E46-AE30-9AA9B1ED1B5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B8E6EF9-0C64-4E46-AE30-9AA9B1ED1B5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD958467-B93E-456C-8D0F-2ECFF12FFB80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD958467-B93E-456C-8D0F-2ECFF12FFB80}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD958467-B93E-456C-8D0F-2ECFF12FFB80}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD958467-B93E-456C-8D0F-2ECFF12FFB80}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FF43695-6B7D-4BCA-A523-C56C883D4C45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8FF43695-6B7D-4BCA-A523-C56C883D4C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FF43695-6B7D-4BCA-A523-C56C883D4C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
