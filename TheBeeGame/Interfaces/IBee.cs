@@ -9,7 +9,6 @@ namespace TheBeeGame.Interfaces
 {
     public interface IBee
     {
-        BeeJobs Job { get; }
         int LifeSpan { get; }
         int DamageOnHit { get; }
     }

@@ -29,11 +29,7 @@ namespace TheBeeGame.Models
 
         public int MyProperty { get; set; }
 
-        public IList<IBee> DroneBees { get; set; }
-
-        public IList<IBee> QueenBees { get; set; }
-
-        public IList<IBee> WorkerBees { get; set; }
+        public IList<IBee> Hive { get; set; }
 
         public string GetTitle()
         {
@@ -43,18 +39,26 @@ namespace TheBeeGame.Models
         public BeeGame SpawnHive()
         {
             if (QueenBeesQuantity == 0) throw new ArgumentException("Queen Bees Quantity Can't be 0");
-
-            IBee QueenBee = new Bee(BeeJobs.Queen, 100, 8);
+            if (WorkerBeesQuantity == 0) throw new ArgumentException("Worker Bees Quantity Can't be 0");
+            if (DroneBeesQuantity == 0) throw new ArgumentException("Drone Bees Quantity Can't be 0");
 
             var game = new BeeGame(queens: QueenBeesQuantity, workers: WorkerBeesQuantity, drones: DroneBeesQuantity) {
-                QueenBees = new List<IBee>(),
-                WorkerBees = new List<IBee>(),
-                DroneBees = new List<IBee>()
+                Hive = new List<IBee>()
             };
 
             for (int i = 0; i < game.QueenBeesQuantity; i++)
             {
-                game.QueenBees.Add(QueenBee);
+                game.Hive.Add(new Queen(new Bee(100, 8)));
+            }
+
+            for (int i = 0; i < game.WorkerBeesQuantity; i++)
+            {
+                game.Hive.Add(new Worker(new Bee(75, 10)));
+            }
+
+            for (int i = 0; i < game.DroneBeesQuantity; i++)
+            {
+                game.Hive.Add(new Drone(new Bee(50, 12)));
             }
 
             return game;

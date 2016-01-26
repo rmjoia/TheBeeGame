@@ -7,13 +7,12 @@ using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
 {
-    public abstract class BaseBee
+    public abstract class BaseBee : IBee
     {
         private IBee _bee;
         public BaseBee(IBee bee)
         {
             DamageOnHit = bee.DamageOnHit;
-            Job = bee.Job;
             LifeSpan = bee.LifeSpan;
         }
 

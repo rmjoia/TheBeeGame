@@ -10,9 +10,7 @@ namespace TheBeeGame.Interfaces
 {
     interface IBeeGame
     {
-        IList<IBee> QueenBees { get; set; }
-        IList<IBee> WorkerBees { get; set; }
-        IList<IBee> DroneBees { get; set; }
+        IList<IBee> Hive { get; set; }
 
         string GetTitle();
         BeeGame SpawnHive();
