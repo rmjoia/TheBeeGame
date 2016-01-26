@@ -83,7 +83,7 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_no_parameters_Should_return_one_QueenBee_null()
         {
             //  Arrange
-            var sut = new BeeGame(0,0,0);
+            var sut = new BeeGame(0, 0, 0);
 
             //  Act
             try
@@ -95,7 +95,7 @@ namespace TheBeeGame.Models.Tests
                 //  Assert
                 Assert.AreEqual("Queen Bees Quantity Can't be 0", e.Message);
                 throw;
-            } 
+            }
         }
 
         [TestMethod, TestCategory("WorkerBees"), Owner("Ricardo Melo Joia")]
@@ -202,6 +202,34 @@ namespace TheBeeGame.Models.Tests
                 Assert.AreEqual("Drone Bees Quantity Can't be 0", e.Message);
                 throw;
             }
+        }
+
+        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
+        public void Given_SpawnHive_Should_return_bees_number_valid()
+        {
+            //  Arrange
+            var sut = new BeeGame(1, 5, 8);
+
+            //  Act
+            var result = sut.SpawnHive();
+
+            var queens = result.Hive
+                .Where(b => b.GetType().Equals(typeof(Queen)))
+                .Select(b => b);
+
+            var workers = result.Hive
+                .Where(b => b.GetType().Equals(typeof(Worker)))
+                .Select(b => b);
+
+            var drones = result.Hive
+                .Where(b => b.GetType().Equals(typeof(Drone)))
+                .Select(b => b);
+
+            //  Assert
+            Assert.AreEqual(14, result.Hive.Count());
+            Assert.AreEqual(1, queens.Count());
+            Assert.AreEqual(5, workers.Count());
+            Assert.AreEqual(8, drones.Count());
         }
     }
 }
