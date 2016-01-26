@@ -44,7 +44,6 @@ namespace TheBeeGame.Models.Tests
             Assert.AreNotEqual("zee Bee Gameeeez", result);
         }
 
-
         [TestMethod, TestCategory("QueenBees"), Owner("Ricardo Melo Joia")]
         public void Given_SpawnHive_Should_return_one_QueenBee_Valid()
         {
@@ -230,6 +229,24 @@ namespace TheBeeGame.Models.Tests
             Assert.AreEqual(1, queens.Count());
             Assert.AreEqual(5, workers.Count());
             Assert.AreEqual(8, drones.Count());
+        }
+
+        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
+        public void Given_SpawnHive_valid_Should_return_random_bee()
+        {
+            //  Arrange
+            var sut = new BeeGame(1, 5, 8);
+            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+
+            //  Act
+            var result = sut.SpawnHive();
+            var randomBee = random.Next(1, result.Hive.Count());
+
+            var bee = result.Hive.ElementAt(randomBee);
+
+            //  Assert
+            Console.WriteLine($"bee at position: {randomBee} - bee role: {bee.GetType()}");
+            Assert.IsNotNull(bee);
         }
     }
 }
