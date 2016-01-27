@@ -255,5 +255,20 @@ namespace TheBeeGame.Models.Tests
 
             Console.WriteLine(string.Join(",", temp.ToList()));
         }
+
+        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
+        public void Called_HitBee_Should_decrease_bee_lifespan()
+        {
+            //  Arrange
+            var sut = new BeeGame(1, 5, 8).SpawnHive();
+            var startScore = sut.Hive.Select(b => b.LifeSpan).Sum();
+
+            //  Act
+            var teste = sut.HitBee(sut);
+            var newScore = sut.Hive.Select(b => b.LifeSpan).Sum();
+
+            //  Assert
+            Assert.AreNotEqual(newScore, startScore);
+        }
     }
 }
