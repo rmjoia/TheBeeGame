@@ -161,6 +161,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\GameSettings.cs" />
+    <Compile Include="Models\Hive.cs" />
     <Compile Include="Interfaces\IBee.cs" />
     <Compile Include="Interfaces\IBeeGame.cs" />
     <Compile Include="Models\Bee.cs" />

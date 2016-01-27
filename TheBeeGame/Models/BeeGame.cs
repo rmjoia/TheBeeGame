@@ -8,95 +8,37 @@ namespace TheBeeGame.Models
 {
     public class BeeGame : IBeeGame
     {
-        private readonly string GameTitle ;
-
-        int QueenBeesQuantity;
-        int WorkerBeesQuantity;
-        int DroneBeesQuantity;
+        private readonly string _gameTitle;
+        private Hive _hive;
 
         public BeeGame()
         {
-            GameTitle = "The Bee Game";
+            _gameTitle = "The Bee Game";
+            _hive = new Hive();
         }
 
-        public BeeGame(int queens, int workers, int drones) : this()
-        {
-            QueenBeesQuantity = queens;
-            WorkerBeesQuantity = workers;
-            DroneBeesQuantity = drones;
-        }
-
+        //TODO: Extract Hive functions to own Model
         public IList<IBee> Hive { get; set; }
 
         public string GetTitle()
         {
-            return GameTitle;
+            return _gameTitle;
         }
 
-        public BeeGame SpawnHive()
+        public BeeGame Start(GameSettings settings)
         {
-            if (QueenBeesQuantity == 0) throw new ArgumentException("Queen Bees Quantity Can't be 0");
-            if (WorkerBeesQuantity == 0) throw new ArgumentException("Worker Bees Quantity Can't be 0");
-            if (DroneBeesQuantity == 0) throw new ArgumentException("Drone Bees Quantity Can't be 0");
+            if (settings.GetQueens() == 0) throw new ArgumentException("Queen Bees Quantity Can't be 0");
+            if (settings.GetWorkers() == 0) throw new ArgumentException("Worker Bees Quantity Can't be 0");
+            if (settings.GetDrones() == 0) throw new ArgumentException("Drone Bees Quantity Can't be 0");
 
-            var game = new BeeGame(queens: QueenBeesQuantity, workers: WorkerBeesQuantity, drones: DroneBeesQuantity) {
-                Hive = new List<IBee>()
-            };
+            Hive = _hive.PopulateHive(settings);
 
-            game.Hive = PopulateHive(game);
-
-            return game;
-        }
-
-        private IList<IBee> PopulateHive(BeeGame game)
-        {
-            var hivePopulation = (QueenBeesQuantity + WorkerBeesQuantity + DroneBeesQuantity);
-            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-            var hive = new IBee[hivePopulation];
-
-            //TODO: Use a availableSlot Array splicing used units
-
-            GenerateBees(beeType: typeof(Queen), container: hive, bee: new Bee(100, 8), beesNumber:QueenBeesQuantity);
-            GenerateBees(beeType: typeof(Worker), container: hive, bee: new Bee(75, 10), beesNumber: WorkerBeesQuantity);
-            GenerateBees(beeType: typeof(Drone), container: hive, bee: new Bee(50, 12), beesNumber: DroneBeesQuantity);
-
-            return hive;
-        }
-
-        private void GenerateBees(Type beeType, IBee[] container, IBee bee, int beesNumber)
-        {
-            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-
-            do
-            {
-                var queenPosition = random.Next(0, container.Length);
-
-                if (container[queenPosition] == null)
-                {
-                    container[queenPosition] = (IBee)Activator.CreateInstance(beeType, bee);
-
-                }
-
-            } while (GetBeesNumber(container, beeType) < beesNumber);
-        }
-
-        private int GetBeesNumber(IBee[] hive, Type beeType)
-        {
-            return hive.Where(b => b != null && b.GetType().Equals(beeType)).Select(b => b).Count();
-        }
-
-        public IBee GetRandomBee(IList<IBee> hive)
-        {
-            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-
-            var randomBee = random.Next(0, hive.Count());
-
-           return hive.ElementAt(randomBee);
+            return this;
         }
 
         public BeeGame HitBee(BeeGame game)
         {
-            var bee = GetRandomBee(game.Hive);
+            var bee = _hive.GetRandomBee(game.Hive);
 
             bee.Hit();
 

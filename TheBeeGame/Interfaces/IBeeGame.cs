@@ -11,8 +11,7 @@ namespace TheBeeGame.Interfaces
     interface IBeeGame
     {
         IList<IBee> Hive { get; set; }
-
         string GetTitle();
-        BeeGame SpawnHive();
+        BeeGame Start(GameSettings settings);
     }
 }

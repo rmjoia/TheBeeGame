@@ -14,11 +14,13 @@ namespace TheBeeGame.Models.Tests
     public class BeeGameTests
     {
         private BeeGame sut;
+        private GameSettings settings;
 
         [TestInitialize]
         public void SetupTests()
         {
             sut = new BeeGame();
+            settings = new GameSettings(1, 5, 8);
         }
 
         [TestMethod(), TestCategory("Title"), Owner("Ricardo Melo Joia")]
@@ -49,10 +51,10 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_Should_return_one_QueenBee_Valid()
         {
             //  Arrange
-            var sut = new BeeGame(1, 1, 1);
+            var sut = new BeeGame();
 
             //  Act
-            var result = sut.SpawnHive();
+            var result = sut.Start(new GameSettings(1, 1, 1));
 
             var queen = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Queen)))
@@ -66,10 +68,10 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_Should_return_two_QueenBees_Invalid()
         {
             //  Arrange
-            var sut = new BeeGame(2, 1, 1);
+            var sut = new BeeGame();
 
             //  Act
-            var result = sut.SpawnHive();
+            var result = sut.Start(new GameSettings(2, 1, 1));
 
             var queen = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Queen)))
@@ -83,12 +85,12 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_no_parameters_Should_return_one_QueenBee_null()
         {
             //  Arrange
-            var sut = new BeeGame(0, 0, 0);
+            var sut = new BeeGame();
 
             //  Act
             try
             {
-                var result = sut.SpawnHive();
+                var result = sut.Start(new GameSettings(0, 0, 0));
             }
             catch (Exception e)
             {
@@ -102,10 +104,10 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_Should_return_five_WorkerBees_Valid()
         {
             //  Arrange
-            var sut = new BeeGame(1, 5, 1);
+            var sut = new BeeGame();
 
             //  Act
-            var result = sut.SpawnHive();
+            var result = sut.Start(new GameSettings(1,5,1));
 
             var workers = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Worker)))
@@ -119,10 +121,10 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_Should_return_one_WorkerBees_Invalid()
         {
             //  Arrange
-            var sut = new BeeGame(1, 1, 1);
+            var sut = new BeeGame();
 
             //  Act
-            var result = sut.SpawnHive();
+            var result = sut.Start(new GameSettings(1, 1, 1));
 
             var workers = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Worker)))
@@ -136,12 +138,12 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_no_parameters_Should_return_WorkerBee_null()
         {
             //  Arrange
-            var sut = new BeeGame(1, 0, 0);
+            var sut = new BeeGame();
 
             //  Act
             try
             {
-                var result = sut.SpawnHive();
+                var result = sut.Start(new GameSettings(1, 0, 0));
             }
             catch (Exception e)
             {
@@ -155,10 +157,10 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_Should_return_eight_DroneBees_Valid()
         {
             //  Arrange
-            var sut = new BeeGame(1, 1, 8);
+            var sut = new BeeGame();
 
             //  Act
-            var result = sut.SpawnHive();
+            var result = sut.Start(new GameSettings(1, 1, 8));
 
             var drones = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Drone)))
@@ -172,10 +174,10 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_Should_return_one_DroneBees_Invalid()
         {
             //  Arrange
-            var sut = new BeeGame(1, 2, 1);
+            var sut = new BeeGame();
 
             //  Act
-            var result = sut.SpawnHive();
+            var result = sut.Start(new GameSettings(1, 2, 1));
 
             var drones = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Drone)))
@@ -189,12 +191,12 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_no_parameters_Should_return_DroneBee_null()
         {
             //  Arrange
-            var sut = new BeeGame(1, 1, 0);
+            var sut = new BeeGame();
 
             //  Act
             try
             {
-                var result = sut.SpawnHive();
+                var result = sut.Start(new GameSettings(1, 1, 0));
             }
             catch (Exception e)
             {
@@ -208,10 +210,10 @@ namespace TheBeeGame.Models.Tests
         public void Given_SpawnHive_Should_return_bees_number_valid()
         {
             //  Arrange
-            var sut = new BeeGame(1, 5, 8);
+            var sut = new BeeGame();
 
             //  Act
-            var result = sut.SpawnHive();
+            var result = sut.Start(settings);
 
             var queens = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Queen)))
@@ -237,13 +239,14 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-            var sut = new BeeGame(1, 5, 8).SpawnHive();
+            var sut = new BeeGame().Start(settings);
             var temp = new IBee[5];
+            var hive = new Hive();
 
             //  Act
             for (int i = 0; i < temp.Length; i++)
             {
-                temp[i] = sut.GetRandomBee(sut.Hive);
+                temp[i] = hive.GetRandomBee(sut.Hive);
             }
 
             //  Assert
@@ -260,7 +263,7 @@ namespace TheBeeGame.Models.Tests
         public void Called_HitBee_Should_decrease_bee_lifespan()
         {
             //  Arrange
-            var sut = new BeeGame(1, 5, 8).SpawnHive();
+            var sut = new BeeGame().Start(settings);
             var startScore = sut.Hive.Select(b => b.LifeSpan).Sum();
 
             //  Act
