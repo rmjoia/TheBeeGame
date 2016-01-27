@@ -10,5 +10,6 @@ namespace TheBeeGame.Interfaces
     {
         int LifeSpan { get; }
         int DamageOnHit { get; }
+        int Hit();
     }
 }
