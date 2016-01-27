@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using TheBeeGame.Enums;
 using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
@@ -57,42 +56,30 @@ namespace TheBeeGame.Models
             var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             var hive = new IBee[hivePopulation];
 
-            //TODO: Refactor to Generic function - DRY Principle
             //TODO: Use a availableSlot Array splicing used units
-            do
-            {
-                var queenPosition = random.Next(0, hivePopulation);
 
-                if (hive[queenPosition] == null)
-                {
-                    hive[queenPosition] = new Queen(new Bee(100, 8));
-                }
-
-            } while (GetBeesNumber(hive, typeof(Queen)) < QueenBeesQuantity);
-
-            do
-            {
-                var queenPosition = random.Next(0, hivePopulation);
-
-                if (hive[queenPosition] == null)
-                {
-                    hive[queenPosition] = new Worker(new Bee(75, 10));
-                }
-
-            } while (GetBeesNumber(hive, typeof(Worker)) < WorkerBeesQuantity);
-
-            do
-            {
-                var queenPosition = random.Next(0, hivePopulation);
-
-                if (hive[queenPosition] == null)
-                {
-                    hive[queenPosition] = new Drone(new Bee(50, 12));
-                }
-
-            } while (GetBeesNumber(hive, typeof(Drone)) < DroneBeesQuantity);
+            GenerateBees(beeType: typeof(Queen), container: hive, bee: new Bee(100, 8), beesNumber:QueenBeesQuantity);
+            GenerateBees(beeType: typeof(Worker), container: hive, bee: new Bee(75, 10), beesNumber: WorkerBeesQuantity);
+            GenerateBees(beeType: typeof(Drone), container: hive, bee: new Bee(50, 12), beesNumber: DroneBeesQuantity);
 
             return hive;
+        }
+
+        private void GenerateBees(Type beeType, IBee[] container, IBee bee, int beesNumber)
+        {
+            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+
+            do
+            {
+                var queenPosition = random.Next(0, container.Length);
+
+                if (container[queenPosition] == null)
+                {
+                    container[queenPosition] = (IBee)Activator.CreateInstance(beeType, bee);
+
+                }
+
+            } while (GetBeesNumber(container, beeType) < beesNumber);
         }
 
         private int GetBeesNumber(IBee[] hive, Type beeType)
