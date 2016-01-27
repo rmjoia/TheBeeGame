@@ -14,7 +14,30 @@ namespace TheBeeGame.Models
             DamageOnHit = damageOnHit;
         }
 
+        public Bee(IBee bee) : base()
+        {
+            LifeSpan = bee.LifeSpan;
+            DamageOnHit = bee.DamageOnHit;
+        }
+
         public int LifeSpan { get; private set; }
         public int DamageOnHit { get; private set; }
+
+        public virtual int Hit()
+        {
+            var damageResult = LifeSpan - DamageOnHit;
+
+            if (damageResult <= 0)
+            {
+                LifeSpan = 0;
+                return 0;
+            }
+            else
+            {
+                LifeSpan -= DamageOnHit;
+                return damageResult;
+            }
+        }
+
     }
 }
