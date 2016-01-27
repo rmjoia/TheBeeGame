@@ -26,8 +26,6 @@ namespace TheBeeGame.Models
             DroneBeesQuantity = drones;
         }
 
-        public int MyProperty { get; set; }
-
         public IList<IBee> Hive { get; set; }
 
         public string GetTitle()
@@ -86,5 +84,6 @@ namespace TheBeeGame.Models
         {
             return hive.Where(b => b != null && b.GetType().Equals(beeType)).Select(b => b).Count();
         }
+
     }
 }
