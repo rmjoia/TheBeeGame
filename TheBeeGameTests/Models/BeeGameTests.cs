@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models.Tests
 {
@@ -231,22 +232,28 @@ namespace TheBeeGame.Models.Tests
             Assert.AreEqual(8, drones.Count());
         }
 
-        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
-        public void Given_SpawnHive_valid_Should_return_random_bee()
+        [TestMethod, TestCategory("BeeGame"), TestCategory("Randomness - Things may happen"), Owner("Ricardo Melo Joia")]
+        public void Given_SpawnHive_valid_Should_Hit_random_bee()
         {
             //  Arrange
-            var sut = new BeeGame(1, 5, 8);
             var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+            var sut = new BeeGame(1, 5, 8).SpawnHive();
+            var temp = new IBee[5];
 
             //  Act
-            var result = sut.SpawnHive();
-            var randomBee = random.Next(1, result.Hive.Count());
-
-            var bee = result.Hive.ElementAt(randomBee);
+            for (int i = 0; i < temp.Length; i++)
+            {
+                temp[i] = sut.GetRandomBee(sut.Hive);
+            }
 
             //  Assert
-            Console.WriteLine($"bee at position: {randomBee} - bee role: {bee.GetType()}");
-            Assert.IsNotNull(bee);
+            Assert.IsFalse(
+                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[1])) &&
+                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[2])) &&
+                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[3])) &&
+                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[4])));
+
+            Console.WriteLine(string.Join(",", temp.ToList()));
         }
     }
 }
