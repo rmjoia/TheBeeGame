@@ -6,7 +6,7 @@ using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
 {
-    public class Worker : BaseBee
+    public class Worker : Bee
     {
         public Worker(IBee bee) :base(bee)
         {

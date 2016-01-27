@@ -6,7 +6,7 @@ using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
 {
-    public class Drone : BaseBee
+    public class Drone : Bee
     {
         public Drone(IBee bee):base(bee)
         {
