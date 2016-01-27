@@ -163,7 +163,6 @@
     </Compile>
     <Compile Include="Interfaces\IBee.cs" />
     <Compile Include="Interfaces\IBeeGame.cs" />
-    <Compile Include="Models\BaseBee.cs" />
     <Compile Include="Models\Bee.cs" />
     <Compile Include="Models\BeeGame.cs" />
     <Compile Include="Models\Drone.cs" />
