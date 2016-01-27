@@ -85,5 +85,22 @@ namespace TheBeeGame.Models
             return hive.Where(b => b != null && b.GetType().Equals(beeType)).Select(b => b).Count();
         }
 
+        public IBee GetRandomBee(IList<IBee> hive)
+        {
+            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+
+            var randomBee = random.Next(0, hive.Count());
+
+           return hive.ElementAt(randomBee);
+        }
+
+        public BeeGame HitBee(BeeGame game)
+        {
+            var bee = GetRandomBee(game.Hive);
+
+            bee.Hit();
+
+            return game;
+        }
     }
 }
