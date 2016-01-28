@@ -35,13 +35,16 @@ namespace TheBeeGame.Models
             return this;
         }
 
-        public BeeGame HitBee(BeeGame game)
+        public DamageControl HitBee(BeeGame game)
         {
             var bee = _hive.GetRandomBee(game.Hive);
 
             bee.Hit();
 
-            return game;
+            return new DamageControl {
+                Bee = bee,
+                BeePosition = game.Hive.IndexOf(bee)
+            };
         }
     }
 }
