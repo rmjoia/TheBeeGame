@@ -17,7 +17,6 @@ namespace TheBeeGame.Models
             _hive = new Hive();
         }
 
-        //TODO: Extract Hive functions to own Model
         public IList<IBee> Hive { get; set; }
 
         public string GetTitle()
