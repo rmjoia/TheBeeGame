@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Web;
 using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
@@ -45,5 +44,19 @@ namespace TheBeeGame.Models
             }
         }
 
+        public virtual IList<IBee> CheckStatus(IBee bee, IList<IBee> hive)
+        {
+            if (bee.LifeSpan == 0)
+            {
+                hive = hive.Where(b => b.LifeSpan > 0).Select(b => b).ToList();
+            }
+
+            return hive;
+        }
+
+        public override string ToString()
+        {
+            return $"{GetType().Name} : <3 {LifeSpan}";
+        }
     }
 }
