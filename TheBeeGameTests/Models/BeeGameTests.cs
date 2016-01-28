@@ -1,12 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TheBeeGame.Models;
+﻿using TheBeeGame.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using TheBeeGame.Interfaces;
+using System.Collections.Generic;
 
 namespace TheBeeGame.Models.Tests
 {
@@ -114,7 +111,7 @@ namespace TheBeeGame.Models.Tests
             var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(rule,new GameRule(0,5,0,0),rule));
+            var result = sut.Start(new GameSettings(rule, new GameRule(0, 5, 0, 0), rule));
 
             var workers = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Worker)))
@@ -150,7 +147,7 @@ namespace TheBeeGame.Models.Tests
             //  Act
             try
             {
-                var result = sut.Start(new GameSettings(new GameRule(0,1,0,0), rule, rule));
+                var result = sut.Start(new GameSettings(new GameRule(0, 1, 0, 0), rule, rule));
             }
             catch (Exception e)
             {
@@ -168,7 +165,7 @@ namespace TheBeeGame.Models.Tests
             var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(rule, rule, new GameRule(0,8,0,0)));
+            var result = sut.Start(new GameSettings(rule, rule, new GameRule(0, 8, 0, 0)));
 
             var drones = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Drone)))
@@ -186,7 +183,7 @@ namespace TheBeeGame.Models.Tests
             var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(rule, new GameRule(0,2,0,0), rule));
+            var result = sut.Start(new GameSettings(rule, new GameRule(0, 2, 0, 0), rule));
 
             var drones = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Drone)))
@@ -206,7 +203,7 @@ namespace TheBeeGame.Models.Tests
             //  Act
             try
             {
-                var result = sut.Start(new GameSettings(rule, rule, new GameRule(0,0,0,0)));
+                var result = sut.Start(new GameSettings(rule, rule, new GameRule(0, 0, 0, 0)));
             }
             catch (Exception e)
             {
@@ -244,7 +241,9 @@ namespace TheBeeGame.Models.Tests
             Assert.AreEqual(8, drones.Count());
         }
 
-        [TestMethod, TestCategory("BeeGame"), TestCategory("Randomness - Things may happen"), Owner("Ricardo Melo Joia")]
+#if DEBUG
+
+        [TestMethod, TestCategory("BeeGame"), TestCategory("Randomness - NEVER INTO PRODUCTION - WILL FAIL OFTEN"), Owner("Ricardo Melo Joia")]
         public void Given_SpawnHive_valid_Should_Hit_random_bee()
         {
             //  Arrange
@@ -260,14 +259,15 @@ namespace TheBeeGame.Models.Tests
             }
 
             //  Assert
+            Console.WriteLine(string.Join(",", temp.ToList()));
             Assert.IsFalse(
                 (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[1])) &&
                 (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[2])) &&
                 (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[3])) &&
                 (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[4])));
-
-            Console.WriteLine(string.Join(",", temp.ToList()));
         }
+
+#endif
 
         [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
         public void Called_HitBee_Should_decrease_bee_lifespan()
@@ -282,6 +282,173 @@ namespace TheBeeGame.Models.Tests
 
             //  Assert
             Assert.AreNotEqual(newScore, startScore);
+        }
+
+        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
+        public void Called_HitBee_onHit_untill_zero_should_NOT_remove_from_hive()
+        {
+            //  Arrange
+            var sut = new BeeGame().Start(settings);
+
+            //  Act
+            int hivePopulation = sut.Hive.Count();
+            var bee = sut.Hive.FirstOrDefault(b => b.GetType().Equals(typeof(Queen)));
+            do
+            {
+                bee.Hit();
+
+            } while (bee.LifeSpan > 0);
+
+            sut.Hive = bee.CheckStatus(bee, sut.Hive);
+
+            //  Assert
+            Console.WriteLine(bee.GetType().Name);
+            Assert.AreNotEqual(hivePopulation, sut.Hive.Count());
+        }
+
+        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
+        public void Called_HitBee_onHit_untill_zero_should_remove_from_hive()
+        {
+            //  Arrange
+            var sut = new BeeGame().Start(settings);
+
+            //  Act
+            int hivePopulation = sut.Hive.Count();
+            var bee = sut.Hive.FirstOrDefault(b => !b.GetType().Equals(typeof(Queen)));
+            do
+            {
+                bee.Hit();
+
+            } while (bee.LifeSpan > 0);
+
+            sut.Hive = bee.CheckStatus(bee, sut.Hive);
+
+            //  Assert
+            Console.WriteLine(bee.GetType().Name);
+            Assert.AreEqual((hivePopulation - 1), sut.Hive.Count());
+        }
+
+        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
+        public void Called_HitBee_onHit_Queen_untill_zero_should_Game_Over()
+        {
+            //  Arrange
+            var sut = new BeeGame().Start(settings);
+
+            //  Act
+            var bee = sut.Hive.FirstOrDefault(b => b.GetType().Equals(typeof(Queen)));
+            do
+            {
+                bee.Hit();
+
+            } while (bee.LifeSpan > 0);
+
+            sut.Hive = bee.CheckStatus(bee, sut.Hive);
+
+            //  Assert
+            Console.WriteLine(bee.GetType().Name);
+            Assert.AreEqual(0, sut.Hive.Count());
+        }
+
+        [TestMethod, TestCategory("BeeGame"), TestCategory("QueenBees") Owner("Ricardo Melo Joia")]
+        public void GetLifeSpan_Queen_Should_Return_Valid()
+        {
+            //  Arrange
+            var sut = new BeeGame();
+            var hive = new List<IBee>
+            {
+                new Queen(new Bee(10,0))
+            };
+
+            //  Act
+            var result = sut.GetLifeSpan(typeof(Queen), hive);
+
+            //  Assert
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod, TestCategory("BeeGame"), TestCategory("QueenBees"), Owner("Ricardo Melo Joia")]
+        public void GetLifeSpan_Queen_Should_Return_Invalid()
+        {
+            //  Arrange
+            var sut = new BeeGame();
+            var hive = new List<IBee>
+            {
+                new Worker(new Bee(10,0))
+            };
+
+            //  Act
+            var result = sut.GetLifeSpan(typeof(Queen), hive);
+
+            //  Assert
+            Assert.AreNotEqual(10, result);
+        }
+
+        [TestMethod, TestCategory("BeeGame"), TestCategory("WorkerBees"), Owner("Ricardo Melo Joia")]
+        public void GetLifeSpan_Worker_Should_Return_Valid()
+        {
+            //  Arrange
+            var sut = new BeeGame();
+            var hive = new List<IBee>
+            {
+                new Worker(new Bee(10,0))
+            };
+
+            //  Act
+            var result = sut.GetLifeSpan(typeof(Worker), hive);
+
+            //  Assert
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod, TestCategory("BeeGame"), TestCategory("WorkerBees"), Owner("Ricardo Melo Joia")]
+        public void GetLifeSpan_Worker_Should_Return_Invalid()
+        {
+            //  Arrange
+            var sut = new BeeGame();
+            var hive = new List<IBee>
+            {
+                new Queen(new Bee(10,0))
+            };
+
+            //  Act
+            var result = sut.GetLifeSpan(typeof(Worker), hive);
+
+            //  Assert
+            Assert.AreNotEqual(10, result);
+        }
+
+        [TestMethod, TestCategory("BeeGame"), TestCategory("DroneBees"), Owner("Ricardo Melo Joia")]
+        public void GetLifeSpan_Drone_Should_Return_Valid()
+        {
+            //  Arrange
+            var sut = new BeeGame();
+            var hive = new List<IBee>
+            {
+                new Drone(new Bee(10,0))
+            };
+
+            //  Act
+            var result = sut.GetLifeSpan(typeof(Drone), hive);
+
+            //  Assert
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod, TestCategory("BeeGame"), TestCategory("DroneBees"), Owner("Ricardo Melo Joia")]
+        public void GetLifeSpan_Drone_Should_Return_Invalid()
+        {
+            //  Arrange
+            var sut = new BeeGame();
+            var hive = new List<IBee>
+            {
+                new Queen(new Bee(10,0))
+            };
+
+            //  Act
+            var result = sut.GetLifeSpan(typeof(Drone), hive);
+
+            //  Assert
+            Assert.AreNotEqual(10, result);
         }
     }
 }
