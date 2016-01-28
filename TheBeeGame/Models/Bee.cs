@@ -20,6 +20,12 @@ namespace TheBeeGame.Models
             DamageOnHit = bee.DamageOnHit;
         }
 
+        public Bee(GameRule rule) : base()
+        {
+            LifeSpan = rule.LifeSpan;
+            DamageOnHit = rule.Damage;
+        }
+
         public int LifeSpan { get; private set; }
         public int DamageOnHit { get; private set; }
 

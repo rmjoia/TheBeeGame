@@ -26,9 +26,9 @@ namespace TheBeeGame.Models
 
         public BeeGame Start(GameSettings settings)
         {
-            if (settings.GetQueens() == 0) throw new ArgumentException("Queen Bees Quantity Can't be 0");
-            if (settings.GetWorkers() == 0) throw new ArgumentException("Worker Bees Quantity Can't be 0");
-            if (settings.GetDrones() == 0) throw new ArgumentException("Drone Bees Quantity Can't be 0");
+            if (settings.GetQueensConfig().Elements == settings.GetQueensConfig().Min) throw new ArgumentException("Queen Bees Quantity Can't be 0");
+            if (settings.GetWorkersConfig().Elements == settings.GetWorkersConfig().Min) throw new ArgumentException("Worker Bees Quantity Can't be 0");
+            if (settings.GetDronesConfig().Elements == settings.GetDronesConfig().Min) throw new ArgumentException("Drone Bees Quantity Can't be 0");
 
             Hive = _hive.PopulateHive(settings);
 

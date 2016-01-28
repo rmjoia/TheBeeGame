@@ -20,7 +20,10 @@ namespace TheBeeGame.Models.Tests
         public void SetupTests()
         {
             sut = new BeeGame();
-            settings = new GameSettings(1, 5, 8);
+            var queensRule = new GameRule(0, 1, 100, 8);
+            var workersRule = new GameRule(0, 5, 75, 10);
+            var dronesRule = new GameRule(0, 8, 50, 12);
+            settings = new GameSettings(queensRule, workersRule, dronesRule);
         }
 
         [TestMethod(), TestCategory("Title"), Owner("Ricardo Melo Joia")]
@@ -52,9 +55,10 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
+            var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(1, 1, 1));
+            var result = sut.Start(new GameSettings(rule, rule, rule));
 
             var queen = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Queen)))
@@ -69,9 +73,10 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
+            var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(2, 1, 1));
+            var result = sut.Start(new GameSettings(new GameRule(0, 2, 0, 0), rule, rule));
 
             var queen = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Queen)))
@@ -86,11 +91,12 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
+            var rule = new GameRule(0, 0, 0, 0);
 
             //  Act
             try
             {
-                var result = sut.Start(new GameSettings(0, 0, 0));
+                var result = sut.Start(new GameSettings(rule, rule, rule));
             }
             catch (Exception e)
             {
@@ -105,9 +111,10 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
+            var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(1,5,1));
+            var result = sut.Start(new GameSettings(rule,new GameRule(0,5,0,0),rule));
 
             var workers = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Worker)))
@@ -122,9 +129,9 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
-
+            var rule = new GameRule(0, 1, 0, 0);
             //  Act
-            var result = sut.Start(new GameSettings(1, 1, 1));
+            var result = sut.Start(new GameSettings(rule, rule, rule));
 
             var workers = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Worker)))
@@ -139,11 +146,11 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
-
+            var rule = new GameRule(0, 0, 0, 0);
             //  Act
             try
             {
-                var result = sut.Start(new GameSettings(1, 0, 0));
+                var result = sut.Start(new GameSettings(new GameRule(0,1,0,0), rule, rule));
             }
             catch (Exception e)
             {
@@ -158,9 +165,10 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
+            var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(1, 1, 8));
+            var result = sut.Start(new GameSettings(rule, rule, new GameRule(0,8,0,0)));
 
             var drones = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Drone)))
@@ -175,9 +183,10 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
+            var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
-            var result = sut.Start(new GameSettings(1, 2, 1));
+            var result = sut.Start(new GameSettings(rule, new GameRule(0,2,0,0), rule));
 
             var drones = result.Hive
                 .Where(b => b.GetType().Equals(typeof(Drone)))
@@ -192,11 +201,12 @@ namespace TheBeeGame.Models.Tests
         {
             //  Arrange
             var sut = new BeeGame();
+            var rule = new GameRule(0, 1, 0, 0);
 
             //  Act
             try
             {
-                var result = sut.Start(new GameSettings(1, 1, 0));
+                var result = sut.Start(new GameSettings(rule, rule, new GameRule(0,0,0,0)));
             }
             catch (Exception e)
             {

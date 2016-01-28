@@ -7,30 +7,30 @@ namespace TheBeeGame.Models
 {
     public class GameSettings
     {
-        int QueenBeesQuantity;
-        int WorkerBeesQuantity;
-        int DroneBeesQuantity;
+        GameRule QueenBees;
+        GameRule WorkerBees;
+        GameRule DroneBees;
 
-        public GameSettings(int queens, int workers, int drones)
+        public GameSettings(GameRule queenBees, GameRule workerBees, GameRule droneBees)
         {
-            QueenBeesQuantity = queens;
-            WorkerBeesQuantity = workers;
-            DroneBeesQuantity = drones;
+            QueenBees = queenBees;
+            WorkerBees = workerBees;
+            DroneBees = droneBees;
         }
 
-        public int GetQueens()
+        public GameRule GetQueensConfig()
         {
-            return QueenBeesQuantity;
+            return QueenBees;
         }
 
-        public int GetWorkers()
+        public GameRule GetWorkersConfig()
         {
-            return WorkerBeesQuantity;
+            return WorkerBees;
         }
 
-        public int GetDrones()
+        public GameRule GetDronesConfig()
         {
-            return DroneBeesQuantity;
+            return DroneBees;
         }
     }
 }
