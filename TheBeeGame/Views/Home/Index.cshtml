@@ -38,8 +38,26 @@
         </div>
     </div>
     <div class="row form-group">
-        <div class="form-group row col-md-4">
-            @Html.ActionLink("Nuke za beez...", "HitBee", "Controller", new { @class= "form-control btn btn-danger" })
+        <div class="form-group row col-md-2">
+            @if (@Model.IsPlaying)
+            {
+                @Html.ActionLink("Nuke za beez...", "HitBee", "Controller", new { @class = "form-control btn btn-danger", @id = "Hit" })
+            }
+            else
+            {
+                @Html.ActionLink("Nuke za beez...", "HitBee", "Controller", new { @class = "form-control btn btn-danger disabled", @id = "Hit" })
+            }
+        </div>
+        <div class="form-group row col-md-2">
+            @if (@Model.IsPlaying)
+            {
+                @Html.ActionLink("Start Game", "StartGame", "Controller", new { @class = "form-control btn btn-success disabled", @id = "Start" })
+            }
+            else
+            {
+                @Html.ActionLink("Start Game", "StartGame", "Controller", new { @class = "form-control btn btn-success", @id = "Start" })
+            }
+
         </div>
     </div>
 </div>

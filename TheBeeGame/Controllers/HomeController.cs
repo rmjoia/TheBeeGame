@@ -29,11 +29,16 @@ namespace TheBeeGame.Controllers
             {
                 game.HitBee(game.Hive);
             }
-            else
-            {
-                settings = (GameSettings)Session["settings"];
-                game.Start(settings);
-            }
+
+            return View("Index", game);
+        }
+
+        public ActionResult StartGame()
+        {
+            game = (BeeGame)Session["game"];
+
+            settings = (GameSettings)Session["settings"];
+            game.Start(settings);
 
             return View("Index", game);
         }
