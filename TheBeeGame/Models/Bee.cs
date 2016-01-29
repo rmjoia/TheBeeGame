@@ -46,11 +46,6 @@ namespace TheBeeGame.Models
 
         public virtual IList<IBee> CheckStatus(IBee bee, IList<IBee> hive)
         {
-            if (bee.LifeSpan == 0)
-            {
-                hive = hive.Where(b => b.LifeSpan > 0).Select(b => b).ToList();
-            }
-
             return hive;
         }
 
