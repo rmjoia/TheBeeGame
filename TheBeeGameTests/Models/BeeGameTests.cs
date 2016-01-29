@@ -242,32 +242,48 @@ namespace TheBeeGame.Models.Tests
         }
 
 #if DEBUG
-
         [TestMethod, TestCategory("BeeGame"), TestCategory("Randomness - NEVER INTO PRODUCTION - WILL FAIL OFTEN"), Owner("Ricardo Melo Joia")]
         public void Given_SpawnHive_valid_Should_Hit_random_bee()
         {
             //  Arrange
             var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             var sut = new BeeGame().Start(settings);
-            var temp = new IBee[5];
+            var container = new List<int>();
             var hive = new Hive();
 
             //  Act
-            for (int i = 0; i < temp.Length; i++)
+            for (int i = 0; i < 500; i++)
             {
-                temp[i] = hive.GetRandomBee(sut.Hive);
+                var bee = hive.GetRandomBee(sut.Hive);
+                container.Add(sut.Hive.IndexOf(bee));
             }
+            var result = container.Average();
 
             //  Assert
-            Console.WriteLine(string.Join(",", temp.ToList()));
-            Assert.IsFalse(
-                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[1])) &&
-                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[2])) &&
-                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[3])) &&
-                (sut.Hive.IndexOf(temp[0]) == sut.Hive.IndexOf(temp[4])));
+            Assert.AreNotEqual(container[0], result);
         }
-
 #endif
+
+        [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
+        public void Given_SpawnHive_valid_Should_NOT_Hit_random_bee()
+        {
+            //  Arrange
+            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
+            var sut = new BeeGame().Start(settings);
+            var container = new List<int>();
+            var hive = new Hive();
+
+            //  Act
+            for (int i = 0; i < 25; i++)
+            {
+                var bee = sut.Hive[1];
+                container.Add(sut.Hive.IndexOf(bee));
+            }
+            var result = container.Average();
+
+            //  Assert
+            Assert.AreEqual(container[0], result);
+        }
 
         [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
         public void Called_HitBee_Should_decrease_bee_lifespan()
@@ -277,7 +293,7 @@ namespace TheBeeGame.Models.Tests
             var startScore = sut.Hive.Select(b => b.LifeSpan).Sum();
 
             //  Act
-            var teste = sut.HitBee(sut);
+            var teste = sut.HitBee(sut.Hive);
             var newScore = sut.Hive.Select(b => b.LifeSpan).Sum();
 
             //  Assert
@@ -285,14 +301,13 @@ namespace TheBeeGame.Models.Tests
         }
 
         [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
-        public void Called_HitBee_onHit_untill_zero_should_NOT_remove_from_hive()
+        public void Called_HitBee_onHit_untill_zero_should_NOT_remove_all_lifespan_from_hive()
         {
             //  Arrange
             var sut = new BeeGame().Start(settings);
 
             //  Act
-            int hivePopulation = sut.Hive.Count();
-            var bee = sut.Hive.FirstOrDefault(b => b.GetType().Equals(typeof(Queen)));
+            var bee = sut.Hive.FirstOrDefault(b => !b.GetType().Equals(typeof(Queen)));
             do
             {
                 bee.Hit();
@@ -303,11 +318,11 @@ namespace TheBeeGame.Models.Tests
 
             //  Assert
             Console.WriteLine(bee.GetType().Name);
-            Assert.AreNotEqual(hivePopulation, sut.Hive.Count());
+            Assert.AreNotEqual(0, sut.Hive.Sum(b => b.LifeSpan));
         }
 
         [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
-        public void Called_HitBee_onHit_untill_zero_should_remove_from_hive()
+        public void Called_HitBee_onHit_untill_zero_should_return_one_LifeSpan_zero()
         {
             //  Arrange
             var sut = new BeeGame().Start(settings);
@@ -325,11 +340,11 @@ namespace TheBeeGame.Models.Tests
 
             //  Assert
             Console.WriteLine(bee.GetType().Name);
-            Assert.AreEqual((hivePopulation - 1), sut.Hive.Count());
+            Assert.AreEqual(1, sut.Hive.Count(b => b.LifeSpan == 0));
         }
 
         [TestMethod, TestCategory("BeeGame"), Owner("Ricardo Melo Joia")]
-        public void Called_HitBee_onHit_Queen_untill_zero_should_Game_Over()
+        public void Called_HitBee_onHit_untill_zero_should_remove_all_lifespan_from_hive()
         {
             //  Arrange
             var sut = new BeeGame().Start(settings);
@@ -346,7 +361,7 @@ namespace TheBeeGame.Models.Tests
 
             //  Assert
             Console.WriteLine(bee.GetType().Name);
-            Assert.AreEqual(0, sut.Hive.Count());
+            Assert.AreEqual(0, sut.Hive.Sum(b => b.LifeSpan));
         }
 
         [TestMethod, TestCategory("BeeGame"), TestCategory("QueenBees") Owner("Ricardo Melo Joia")]
