@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
@@ -14,7 +15,14 @@ namespace TheBeeGame.Models
         {
             if (bee.LifeSpan == 0)
             {
-                hive = new List<IBee>();
+                foreach (var _bee in hive)
+                {
+                    do
+                    {
+                        _bee.Hit();
+
+                    } while (_bee.LifeSpan > 0);
+                }
             }
 
             return hive;
