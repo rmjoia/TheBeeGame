@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TheBeeGame.Interfaces
 {
@@ -11,5 +7,6 @@ namespace TheBeeGame.Interfaces
         int LifeSpan { get; }
         int DamageOnHit { get; }
         int Hit();
+        IList<IBee> CheckStatus(IBee bee, IList<IBee> hive);
     }
 }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Web;
 using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
@@ -18,6 +17,12 @@ namespace TheBeeGame.Models
         {
             LifeSpan = bee.LifeSpan;
             DamageOnHit = bee.DamageOnHit;
+        }
+
+        public Bee(GameRule rule) : base()
+        {
+            LifeSpan = rule.LifeSpan;
+            DamageOnHit = rule.Damage;
         }
 
         public int LifeSpan { get; private set; }
@@ -39,5 +44,14 @@ namespace TheBeeGame.Models
             }
         }
 
+        public virtual IList<IBee> CheckStatus(IBee bee, IList<IBee> hive)
+        {
+            return hive;
+        }
+
+        public override string ToString()
+        {
+            return $"{GetType().Name} : <3 {LifeSpan}";
+        }
     }
 }

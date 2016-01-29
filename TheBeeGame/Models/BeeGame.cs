@@ -1,106 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using TheBeeGame.Interfaces;
 
 namespace TheBeeGame.Models
 {
     public class BeeGame : IBeeGame
     {
-        private readonly string GameTitle ;
-
-        int QueenBeesQuantity;
-        int WorkerBeesQuantity;
-        int DroneBeesQuantity;
+        private readonly string _gameTitle;
+        private Hive _hive;
 
         public BeeGame()
         {
-            GameTitle = "The Bee Game";
-        }
-
-        public BeeGame(int queens, int workers, int drones) : this()
-        {
-            QueenBeesQuantity = queens;
-            WorkerBeesQuantity = workers;
-            DroneBeesQuantity = drones;
+            _gameTitle = "The Bee Game";
+            _hive = new Hive();
         }
 
         public IList<IBee> Hive { get; set; }
 
+        public bool IsPlaying { get; private set; }
+
+        public int QueensLifeSpan { get; private set; }
+        public int WorkersLifeSpan { get; private set; }
+        public int DronesLifeSpan { get; private set; }
+
         public string GetTitle()
         {
-            return GameTitle;
+            return _gameTitle;
         }
 
-        public BeeGame SpawnHive()
+        public BeeGame Start(GameSettings settings)
         {
-            if (QueenBeesQuantity == 0) throw new ArgumentException("Queen Bees Quantity Can't be 0");
-            if (WorkerBeesQuantity == 0) throw new ArgumentException("Worker Bees Quantity Can't be 0");
-            if (DroneBeesQuantity == 0) throw new ArgumentException("Drone Bees Quantity Can't be 0");
+            if (settings.GetQueensConfig().Elements == settings.GetQueensConfig().Min) throw new ArgumentException("Queen Bees Quantity Can't be 0");
+            if (settings.GetWorkersConfig().Elements == settings.GetWorkersConfig().Min) throw new ArgumentException("Worker Bees Quantity Can't be 0");
+            if (settings.GetDronesConfig().Elements == settings.GetDronesConfig().Min) throw new ArgumentException("Drone Bees Quantity Can't be 0");
 
-            var game = new BeeGame(queens: QueenBeesQuantity, workers: WorkerBeesQuantity, drones: DroneBeesQuantity) {
-                Hive = new List<IBee>()
-            };
+            Hive = _hive.PopulateHive(settings);
+            UpdateGameStatus(Hive);
+            IsPlaying = true;
 
-            game.Hive = PopulateHive(game);
-
-            return game;
+            return this;
         }
 
-        private IList<IBee> PopulateHive(BeeGame game)
+        public DamageControl HitBee(IList<IBee> hive)
         {
-            var hivePopulation = (QueenBeesQuantity + WorkerBeesQuantity + DroneBeesQuantity);
-            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-            var hive = new IBee[hivePopulation];
-
-            //TODO: Use a availableSlot Array splicing used units
-
-            GenerateBees(beeType: typeof(Queen), container: hive, bee: new Bee(100, 8), beesNumber:QueenBeesQuantity);
-            GenerateBees(beeType: typeof(Worker), container: hive, bee: new Bee(75, 10), beesNumber: WorkerBeesQuantity);
-            GenerateBees(beeType: typeof(Drone), container: hive, bee: new Bee(50, 12), beesNumber: DroneBeesQuantity);
-
-            return hive;
-        }
-
-        private void GenerateBees(Type beeType, IBee[] container, IBee bee, int beesNumber)
-        {
-            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-
-            do
-            {
-                var queenPosition = random.Next(0, container.Length);
-
-                if (container[queenPosition] == null)
-                {
-                    container[queenPosition] = (IBee)Activator.CreateInstance(beeType, bee);
-
-                }
-
-            } while (GetBeesNumber(container, beeType) < beesNumber);
-        }
-
-        private int GetBeesNumber(IBee[] hive, Type beeType)
-        {
-            return hive.Where(b => b != null && b.GetType().Equals(beeType)).Select(b => b).Count();
-        }
-
-        public IBee GetRandomBee(IList<IBee> hive)
-        {
-            var random = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-
-            var randomBee = random.Next(0, hive.Count());
-
-           return hive.ElementAt(randomBee);
-        }
-
-        public BeeGame HitBee(BeeGame game)
-        {
-            var bee = GetRandomBee(game.Hive);
+            var bee = _hive.GetRandomBee(hive.Where(b => b.LifeSpan > 0).ToList());
 
             bee.Hit();
 
-            return game;
+            bee.CheckStatus(bee, hive);
+
+            UpdateGameStatus(Hive);
+
+            return new DamageControl
+            {
+                Bee = bee,
+                BeePosition = hive.IndexOf(bee)
+            };
+        }
+
+        private void UpdateGameStatus(IList<IBee> hive)
+        {
+            if (hive.Sum(b => b.LifeSpan) == 0)
+            {
+                IsPlaying = false;
+            }
+
+            QueensLifeSpan = GetLifeSpan(typeof(Queen), hive);
+            WorkersLifeSpan = GetLifeSpan(typeof(Worker), hive);
+            DronesLifeSpan = GetLifeSpan(typeof(Drone), hive);
+
+        }
+
+        public int GetLifeSpan(Type type, IList<IBee> hive)
+        {
+            return hive.Where(b => b.GetType().Equals(type)).Select(b => b.LifeSpan).Sum();
         }
     }
 }
